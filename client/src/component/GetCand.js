@@ -9,12 +9,13 @@ export const GetCand = (props) => {
 
     const {userData, setUserData} = useUserData()
 
-    const [post, setPosts] = useState([])
+    // const [post, setPosts] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [id, setId] = useState('');
     const [name, setName] = useState('');
      const [age, setAge] = useState('');
 
+     //get all data from context
      const fetchHandler = useCallback(async () =>
      {
          const postData = await getUserData();
