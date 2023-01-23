@@ -2,6 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const body_parser = require('body-parser');
 const cors = require('cors');
+const expressformidable = require('express-formidable')
+const cloudinary = require('cloudinary')
+
+
 
 // for authentication json web tokens use 
 
@@ -34,10 +38,18 @@ const dataSchema = new mongoose.Schema({
         required: true,
         type: String
     },
+    email: {
+        
+        type: String
+    },
     age: {
         required: true,
         type: Number
-    }
+    },
+    image: {
+        type: String
+    },
+
 });
 
 const Data = mongoose.model('Datas', dataSchema);
@@ -64,13 +76,25 @@ const dataSchema_auth = new mongoose.Schema({
 });
 const authModel = new mongoose.model('people', dataSchema_auth)
 
+//cloudinary variables configuration
+cloudinary.config({
+    cloud_name: 'du7rnkxoi',
+    api_key: '985441353525259',
+    api_secret: 'IC9ADGBFiXKJ_7UZjhgXZ0-KRLw',
+    //  cloudinary_url: 'cloudinary://985441353525259:IC9ADGBFiXKJ_7UZjhgXZ0-KRLw@du7rnkxoi',
+    secure: true
+})
+
+
 /* ---------------- CRUDS OPERATION ----------------*/
 //post all data
 app.post('/post', async (req, res) => {
-    
-    const data = new Data({
+
+    const data =  new Data({
         name: req.body.name,
-        age: req.body.age
+        email: req.body.email,
+        age: req.body.age,
+        image: req.body.image
     })
 
     try {
@@ -136,7 +160,7 @@ app.delete('/delete/:id', async (req, res) => {
 
 // Register user
 app.post('/auth/register', async (req, res) => {
-    const enpass = await bcrypt.hash(req.body.password, 10)       
+    const enpass = await bcrypt.hash(req.body.password, 10)
     const data = new authModel({
         name: req.body.name,
         email: req.body.email,
@@ -158,7 +182,7 @@ app.post('/auth/login', async (req, res) => {
         email: req.body.email,
     });
     if (!user) {
-        return res.json({status: 404, error: 'Not Found'})
+        return res.json({ status: 404, error: 'Not Found' })
     }
     const ispassValid = await bcrypt.compare(req.body.password, user.password)
 
@@ -177,6 +201,30 @@ app.post('/auth/login', async (req, res) => {
     }
 
 });
+
+
+//image post request
+app.post('/auth/upload_image', expressformidable({ maxFileSize: 5 * 1024 * 1024 }), async (req, res) => {
+
+    console.log("elam mama");
+    const data = req.files
+    const imageDetails = JSON.stringify(data)
+    const image = JSON.parse(imageDetails)
+    console.log("imageDetails: " + image);
+    try {
+        const result = await cloudinary.uploader.upload(image.iamge.path);
+        console.log("Uplaod Image: ", result);
+        res.json({
+            url: result.secure_url,
+            public_id: result.public_id,
+        });
+    } catch (error) {
+        console.log("error: " + error);
+
+        // console.log("imageDetails: " + .);
+    }
+
+})
 
 
 
