@@ -24,7 +24,7 @@ export const DashBoard = () => {
   const [fname, setFname] = useState("")
   const [age, setAge] = useState("")
   const [email, setEmail] = useState("")
-  const [image, setImage] = useState({})
+  const [image, setImage] = useState("")
   // const [file, setFile] = useState("")
 
 

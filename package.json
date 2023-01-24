@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "cors": "^2.8.5",
-    "json-web-token": "^3.2.0"
-  }
-}
