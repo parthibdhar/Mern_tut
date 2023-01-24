@@ -63,6 +63,7 @@ export const DashBoard = () => {
     axios.post('http://localhost:5000/post', { name, email, age,image })
       .then(response => {
         window.alert('Data saved');
+        setImage("")
       });
   }
 
@@ -92,8 +93,8 @@ export const DashBoard = () => {
           <br />
           <label htmlFor="img" >
             {
-              image && image.url ?
-                (<img src={image.url} height={190} width={190} alt='minato' />)
+              image ?
+                (<img src={image} height={190} width={190} alt='minato' />)
                 : uploading ?
                   (
                     <>
@@ -119,10 +120,7 @@ export const DashBoard = () => {
 
                   console.log("image uploaded: " + data.public_id);
                   setUploading(false)
-                  setImage({
-                    url: data.url,
-                    public_id: data.public_id
-                  })
+                  setImage(data.url)
                 }
                 catch (error) {
                   console.log(error);
