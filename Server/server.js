@@ -47,7 +47,9 @@ const dataSchema = new mongoose.Schema({
         type: Number
     },
     image: {
-        type: String
+        url: String,
+        public_id: String
+        
     },
 
 });
@@ -125,6 +127,18 @@ app.get('/getOne/:id', async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 })
+
+//Get by email Methodd
+app.get('/getByEmail',  async (req, res) => {
+
+    const email = req.query.email
+    console.log("email: " + email);
+    const result = await Data.find({email: "ks@gmail.com"});
+    // const result = await cursor.toArray()
+    console.log(result);
+   return res.json(result)
+})
+
 
 //Update by ID Method
 app.put('/update/:id', async (req, res) => {

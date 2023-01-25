@@ -24,8 +24,12 @@ export const DashBoard = () => {
   const [fname, setFname] = useState("")
   const [age, setAge] = useState("")
   const [email, setEmail] = useState("")
-  const [image, setImage] = useState("")
+  const [image, setImage] = useState({})
   // const [file, setFile] = useState("")
+  //Get details of post
+  const [posts, setPosts] = useState([])
+  //token store
+  const token = localStorage.getItem('token');
 
 
   useEffect(() => {
@@ -33,7 +37,6 @@ export const DashBoard = () => {
   }, []);
 
   function getUserData() {
-    const token = localStorage.getItem('token');
     // console.log("token: " + token);
 
     if (token) {
@@ -67,6 +70,28 @@ export const DashBoard = () => {
       });
   }
 
+  //use effect for post
+  useEffect(() => {
+    if (token) {
+      fetchUserPost();
+
+      }
+    
+  }, [token]);
+  //ftech user post
+  const fetchUserPost = async (req, res) => {
+    try {
+      const  data  = await axios.post("http://localhost:5000/getByEmail",{email})
+      // const user = JSON.parse(data/);
+      
+      console.log("data: " + data.data);
+      // console.log("post: " + pst);
+      setPosts(data)
+      
+    } catch (err) {
+      console.log("error: " + err);
+    }
+  }
   return (
     <>
       {/* USER GREETING */}
@@ -93,8 +118,8 @@ export const DashBoard = () => {
           <br />
           <label htmlFor="img" >
             {
-              image ?
-                (<img src={image} height={190} width={190} alt='minato' />)
+              image && image.url?
+                (<img src={image.url} height={190} width={190} alt='minato' />)
                 : uploading ?
                   (
                     <>
@@ -120,7 +145,7 @@ export const DashBoard = () => {
 
                   console.log("image uploaded: " + data.public_id);
                   setUploading(false)
-                  setImage(data.url)
+                  setImage(data)
                 }
                 catch (error) {
                   console.log(error);
