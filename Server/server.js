@@ -93,7 +93,7 @@ cloudinary.config({
 app.post('/post', async (req, res) => {
 
     const data =  new Data({
-        name: req.body.name,
+        name: req.body.fname,
         email: req.body.email,
         age: req.body.age,
         image: req.body.image
@@ -129,14 +129,14 @@ app.get('/getOne/:id', async (req, res) => {
 })
 
 //Get by email Methodd
-app.get('/getByEmail',  async (req, res) => {
+app.get('/getByEmail/:email',  async (req, res) => {
 
-    const email = req.query.email
-    console.log("email: " + email);
-    const result = await Data.find({email: "ks@gmail.com"});
+    const mail = req.params.email
+    console.log("email: " + mail);
+    const result = await Data.find({email: mail});
     // const result = await cursor.toArray()
     console.log(result);
-   return res.json(result)
+   return res.json({'status': 'success', 'user': result})
 })
 
 

@@ -27,7 +27,7 @@ export const DashBoard = () => {
   const [image, setImage] = useState({})
   // const [file, setFile] = useState("")
   //Get details of post
-  const [posts, setPosts] = useState([])
+  const [userData, setUserData] = useState([])
   //token store
   const token = localStorage.getItem('token');
 
@@ -63,7 +63,7 @@ export const DashBoard = () => {
 
   const postHandler = e => {
     e.preventDefault();
-    axios.post('http://localhost:5000/post', { name, email, age,image })
+    axios.post('http://localhost:5000/post', { fname, email, age, image })
       .then(response => {
         window.alert('Data saved');
         setImage("")
@@ -72,36 +72,49 @@ export const DashBoard = () => {
 
   //use effect for post
   useEffect(() => {
-    if (token) {
+    if (email) {
       fetchUserPost();
 
-      }
-    
-  }, [token]);
+    }
+
+  }, [email]);
   //ftech user post
   const fetchUserPost = async (req, res) => {
-    try {
-      const  data  = await axios.post("http://localhost:5000/getByEmail",{email})
-      // const user = JSON.parse(data/);
-      
-      console.log("data: " + data.data);
-      // console.log("post: " + pst);
-      setPosts(data)
-      
-    } catch (err) {
+
+    await axios.get(`http://localhost:5000/getByEmail/${email}`).then(resp => {
+      // const user = req.data.result
+      console.log("data: " + resp.data.user[0].name);
+
+      setUserData(resp.data.user)
+
+    }).catch(err => {
       console.log("error: " + err);
-    }
+
+    })
+
   }
+
+  const editHandler = (req, res) => {
+    alert("edit korba suna? 😞")
+  }
+
+  const deleteHandler = (req, res) => {
+    alert("tumi chole jaba suna? Disappointed Face on Microsoft Teams 1.0  ")
+  }
+
+
   return (
     <>
       {/* USER GREETING */}
-      {
-        isLoading ? <div>loading...</div> :
-          <h1>kigo suna {name ? name : 'painai'}
-          </h1>
+      <div>
+        {
+          isLoading ? <div>loading...</div> :
+            <h1>kigo suna {name ? name + " & your mail is " + email : 'painai'}
+            </h1>
 
 
-      }
+        }
+      </div>
 
       {/* USER  POSTING PLACE */}
       <div>
@@ -113,12 +126,12 @@ export const DashBoard = () => {
           </label>
           <label>
             Age:
-            <input type="text" value={age}  onChange={e => setAge(e.target.value)} />
+            <input type="text" value={age} onChange={e => setAge(e.target.value)} />
           </label>
           <br />
           <label htmlFor="img" >
             {
-              image && image.url?
+              image && image.url ?
                 (<img src={image.url} height={190} width={190} alt='minato' />)
                 : uploading ?
                   (
@@ -161,7 +174,23 @@ export const DashBoard = () => {
           <button type="submit" value="post" > post</button>
         </form>
       </div>
+      {/* <hr /> */}
+      {/* Displaying users posts */}
+      {userData?.length || userData != null ?
+       
+          userData.map(post => 
 
+
+            <div key={post._id}>{post.name} -{'>'} {post.age} <img src={post.image.url} alt="" height={150} width={150}/>
+            <button onClick={()=>editHandler(post)}>Edit</button>  <button onClick={()=>deleteHandler(post)}>Delete</button>
+            </div>
+          
+
+          ):
+          
+        <div>No Data</div>
+
+      }
 
     </>
   )
